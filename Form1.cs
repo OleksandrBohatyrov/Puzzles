@@ -1,104 +1,110 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Linq;
 
 namespace WinFormsApp1
 {
     public partial class Form1 : Form
     {
-        private PictureBox pcBox;
-        private Rectangle rectangle;
-        private Rectangle circle;
-        private Rectangle square;
-        private bool RectangleClicked = false;
-        private bool CircleClicked = false;
-        private bool SquareClicked = false;
-        private int RectangleX, RectangleY;
+
+        private bool PuzzlePieceClicked;
+        private int PuzzlePieceIndex;
+        private int PuzzlePieceX, PuzzlePieceY;
+        private PictureBox[] puzzlePieces;
 
         public Form1()
         {
             InitializeComponent();
             InitializeUI();
+
         }
 
         private void InitializeUI()
         {
-            pcBox = new PictureBox();
-            pcBox.Location = new Point(10, 10);
-            pcBox.Size = new Size(900, 900);
-            pcBox.Paint += new PaintEventHandler(OnPaint);
-            pcBox.MouseDown += new MouseEventHandler(OnMouseDown);
-            pcBox.MouseMove += new MouseEventHandler(OnMouseMove);
-            pcBox.MouseUp += new MouseEventHandler(OnMouseUp);
-            Controls.Add(pcBox);
-
-            rectangle = new Rectangle(10, 10, 200, 100);
-            circle = new Rectangle(220, 10, 150, 150);
-            square = new Rectangle(380, 10, 150, 150);
 
 
-            this.pcBox.BorderStyle = BorderStyle.Fixed3D;
+     
+
+            //rectangle = new Rectangle(10, 10, 200, 100);
+            //circle = new Rectangle(220, 10, 150, 150);
+            //square = new Rectangle(380, 10, 150, 150);
+
+
+       
+
+
+            //PictureBoxes
+            AddPuzzlePieces(1);
+        
         }
-    
 
-        private void OnPaint(object sender, PaintEventArgs e)
+
+        //private void OnPaint(object sender, PaintEventArgs e)
+        //{
+        //    Graphics graphics = e.Graphics;
+
+        //    graphics.FillEllipse(Brushes.Red, circle);
+        //    graphics.FillRectangle(Brushes.Blue, square);
+        //    graphics.FillRectangle(Brushes.Yellow, rectangle);
+        //}
+
+        private void AddPuzzlePieces(int count)
         {
-            Graphics graphics = e.Graphics;
+            puzzlePieces = new PictureBox[count];
 
-            graphics.FillEllipse(Brushes.Red, circle);
-            graphics.FillRectangle(Brushes.Blue, square);
-            graphics.FillRectangle(Brushes.Yellow, rectangle);
+            for (int i = 0; i < count; i++)
+            {
+                puzzlePieces[i] = new PictureBox();
+                puzzlePieces[i].Location = new Point();
+                puzzlePieces[i].Image = new Bitmap($"../../../{i + 1}.png");
+                puzzlePieces[i].Size = new Size(280, 280);
+                puzzlePieces[i].SizeMode = PictureBoxSizeMode.Zoom;
+
+                puzzlePieces[i].MouseDown += new MouseEventHandler(OnMouseDown);
+                puzzlePieces[i].MouseMove += new MouseEventHandler(OnMouseMove);
+                puzzlePieces[i].MouseUp += new MouseEventHandler(OnMouseUp);
+
+                Controls.Add(puzzlePieces[i]);
+            }
         }
 
+        public DoubleBufferedForm()
+        {
+            DoubleBuffered = true;
+        }
         private void OnMouseDown(object sender, MouseEventArgs e)
         {
-            if (rectangle.Contains(e.Location))
+            for (int i = 0; i < puzzlePieces.Length; i++)
             {
-                RectangleClicked = true;
-                RectangleX = e.X - rectangle.X;
-                RectangleY = e.Y - rectangle.Y;
-            }
-            else if (circle.Contains(e.Location))
-            {
-                CircleClicked = true;
-                RectangleX = e.X - circle.X;
-                RectangleY = e.Y - circle.Y;
-            }
-            else if (square.Contains(e.Location))
-            {
-                SquareClicked = true;
-                RectangleX = e.X - square.X;
-                RectangleY = e.Y - square.Y;
+                if (puzzlePieces[i].Bounds.Contains(e.Location))
+                {
+                    PuzzlePieceClicked = true;
+                    PuzzlePieceIndex = i;
+                    PuzzlePieceX = e.X - puzzlePieces[i].Location.X;
+                    PuzzlePieceY = e.Y - puzzlePieces[i].Location.Y;
+                    Console.WriteLine("down");
+                    break;
+                }
             }
         }
+
 
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
-            if (RectangleClicked)
+            if (PuzzlePieceClicked)
             {
-                rectangle.X = e.X - RectangleX;
-                rectangle.Y = e.Y - RectangleY;
-                pcBox.Invalidate();
-            }
-            else if (CircleClicked)
-            {
-                circle.X = e.X - RectangleX;
-                circle.Y = e.Y - RectangleY;
-                pcBox.Invalidate();
-            }
-            else if (SquareClicked)
-            {
-                square.X = e.X - RectangleX;
-                square.Y = e.Y - RectangleY;
-                pcBox.Invalidate();
+                Controls[PuzzlePieceIndex].Location = new Point(e.X - PuzzlePieceX, e.Y - PuzzlePieceY);
+                Console.WriteLine("move");
             }
         }
 
         private void OnMouseUp(object sender, MouseEventArgs e)
         {
-            RectangleClicked = false;
-            CircleClicked = false;
-            SquareClicked = false;
+            PuzzlePieceClicked = false;
+
         }
     }
+
+
 }
