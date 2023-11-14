@@ -21,9 +21,9 @@ namespace WinFormsApp1
             this.image = image;
             Cursor = Cursors.Hand;
 
-            // Calculate the size while maintaining the original aspect ratio
+           
             float aspectRatio = (float)image.Width / image.Height;
-            int newWidth = 100; // Set your desired width
+            int newWidth = 100; 
             int newHeight = (int)(newWidth / aspectRatio);
             Size = new Size(newWidth, newHeight);
 
