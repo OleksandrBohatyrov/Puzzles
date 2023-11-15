@@ -83,7 +83,7 @@ namespace WinFormsApp1
 
             for (int i = 0; i < count; i++)
             {
-                Bitmap puzzleImage = new Bitmap($"../../../{i + 1}.png");
+                Bitmap puzzleImage = new Bitmap($"../../../{i + 1}.jpg");
                 puzzleImage.MakeTransparent();
 
 
